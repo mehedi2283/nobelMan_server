@@ -7,6 +7,7 @@ import ClientLogo from './models/ClientLogo.js';
 import Profile from './models/Profile.js';
 import Message from './models/Message.js';
 import Admin from './models/Admin.js';
+import ChatLog from './models/ChatLog.js';
 
 dotenv.config();
 
@@ -322,6 +323,30 @@ app.delete('/api/messages/:id', async (req, res) => {
     res.status(500).json({ message: err.message });
   }
 });
+
+// --- CHAT LOG ROUTES ---
+
+app.get('/api/chat-logs', async (req, res) => {
+  try {
+    // Get last 200 messages for dashboard
+    const logs = await ChatLog.find().sort({ createdAt: -1 }).limit(200);
+    res.json(logs);
+  } catch (err) {
+    res.status(500).json({ message: err.message });
+  }
+});
+
+app.post('/api/chat-logs', async (req, res) => {
+  try {
+    const { role, text } = req.body;
+    const newLog = new ChatLog({ role, text });
+    await newLog.save();
+    res.json(newLog);
+  } catch (err) {
+    res.status(400).json({ message: err.message });
+  }
+});
+
 app.listen(PORT, () => {
   console.log(`Server running on port ${PORT}`);
 });
