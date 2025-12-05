@@ -6,6 +6,7 @@ import dotenv from 'dotenv';
 import ClientLogo from './models/ClientLogo.js';
 import Profile from './models/Profile.js';
 import Message from './models/Message.js';
+import Admin from './models/Admin.js';
 
 dotenv.config();
 
@@ -17,11 +18,72 @@ app.use(express.json());
 
 mongoose
   .connect(process.env.MONGO_URI)
-  .then(() => console.log("MongoDB Connected"))
+  .then(async () => {
+    console.log('MongoDB Connected successfully');
+    await initAdmin();
+  })
   .catch((err) => console.error("MongoDB connection error:", err));
+   
 
-app.get("/", (req, res) => {
-  res.send("Server is running...");
+// Initialize Default Admin
+const initAdmin = async () => {
+  try {
+    const count = await Admin.countDocuments();
+    if (count === 0) {
+      const defaultAdmin = new Admin({
+        email: 'shafiulislamnobel1@gmail.com',
+        password: '12345678'
+      });
+      await defaultAdmin.save();
+      console.log('Default admin account initialized.');
+    }
+  } catch (error) {
+    console.error('Error initializing admin:', error);
+  }
+};
+
+// Routes
+
+// Health Check Route (Root)
+app.get('/', (req, res) => {
+    res.send('API is running...');
+});
+
+// --- AUTH ROUTES ---
+
+app.post('/api/auth/login', async (req, res) => {
+  const { email, password } = req.body;
+  try {
+    const admin = await Admin.findOne({ email });
+    if (admin && admin.password === password) {
+      res.json({ message: 'Login successful' });
+    } else {
+      res.status(401).json({ message: 'Invalid credentials' });
+    }
+  } catch (err) {
+    res.status(500).json({ message: err.message });
+  }
+});
+
+app.post('/api/auth/update', async (req, res) => {
+  const { email, password } = req.body;
+  try {
+    // Update the first admin found (assuming single admin system)
+    const admin = await Admin.findOne();
+    if (admin) {
+      admin.email = email;
+      admin.password = password;
+      await admin.save();
+      res.json({ message: 'Credentials updated successfully' });
+    } else {
+      // Fallback if somehow deleted
+      const newAdmin = new Admin({ email, password });
+      await newAdmin.save();
+      res.json({ message: 'Admin created successfully' });
+    }
+  } catch (err) {
+    res.status(500).json({ message: err.message });
+  }
 });
 
 // your other routes...
