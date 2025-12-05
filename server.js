@@ -23,10 +23,6 @@ app.get("/", (req, res) => {
 
 // your other routes...
 
-app.listen(PORT, () => {
-  console.log(`Server running on port ${PORT}`);
-});
-
 
 // Get all projects
 app.get('/api/projects', async (req, res) => {
@@ -65,10 +61,6 @@ app.post('/api/projects', async (req, res) => {
   } catch (err) {
     res.status(400).json({ message: err.message });
   }
-});
-
-app.get("/", (req, res) => {
-  res.send("Portfolio API is running");
 });
 
 
