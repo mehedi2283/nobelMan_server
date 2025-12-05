@@ -8,6 +8,9 @@ const profileSchema = new mongoose.Schema({
   resumeUrl: { type: String, default: '' },
   aboutImage1: { type: String, default: '' }, // Portrait
   aboutImage2: { type: String, default: '' }, // Landscape
+  statsValue: { type: String, default: '100' }, // New: The number (e.g., 100)
+  statsLabel: { type: String, default: 'User-focused screens created from wireframes to polished UI.' }, // New: The description
+
   socialLinkedin: { type: String, default: '' },
   socialBehance: { type: String, default: '' },
   socialInstagram: { type: String, default: '' },
