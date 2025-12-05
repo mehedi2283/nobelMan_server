@@ -4,6 +4,8 @@ import cors from 'cors';
 import Project from './models/Project.js';
 import dotenv from 'dotenv';
 import ClientLogo from './models/ClientLogo.js';
+import Profile from './models/Profile.js';
+import Message from './models/Message.js';
 
 dotenv.config();
 
@@ -194,6 +196,70 @@ app.delete('/api/logos/:id', async (req, res) => {
   }
 });
 
+
+// --- PROFILE ROUTES ---
+
+app.get('/api/profile', async (req, res) => {
+  try {
+    let profile = await Profile.findOne();
+    if (!profile) {
+        // Return default structure if none exists
+        profile = new Profile(); 
+    }
+    res.json(profile);
+  } catch (err) {
+    res.status(500).json({ message: err.message });
+  }
+});
+
+app.post('/api/profile', async (req, res) => {
+  try {
+    // Find first or create
+    let profile = await Profile.findOne();
+    if (profile) {
+      // Update
+      Object.assign(profile, req.body);
+      await profile.save();
+    } else {
+      // Create
+      profile = new Profile(req.body);
+      await profile.save();
+    }
+    res.json(profile);
+  } catch (err) {
+    res.status(400).json({ message: err.message });
+  }
+});
+
+// --- MESSAGE ROUTES (CONTACT FORM) ---
+
+app.get('/api/messages', async (req, res) => {
+  try {
+    const messages = await Message.find().sort({ createdAt: -1 });
+    res.json(messages);
+  } catch (err) {
+    res.status(500).json({ message: err.message });
+  }
+});
+
+app.post('/api/messages', async (req, res) => {
+  try {
+    const newMessage = new Message(req.body);
+    await newMessage.save();
+    res.json(newMessage);
+  } catch (err) {
+    res.status(400).json({ message: err.message });
+  }
+});
+
+app.delete('/api/messages/:id', async (req, res) => {
+  try {
+    await Message.findByIdAndDelete(req.params.id);
+    res.json({ message: 'Message deleted' });
+  } catch (err) {
+    res.status(500).json({ message: err.message });
+  }
+});
 app.listen(PORT, () => {
   console.log(`Server running on port ${PORT}`);
 });
