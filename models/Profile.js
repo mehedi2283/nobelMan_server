@@ -1,3 +1,5 @@
+import mongoose from 'mongoose';
+
 const profileSchema = new mongoose.Schema({
   // Identity
   name: { type: String, default: 'Nobel' },
@@ -26,3 +28,5 @@ const profileSchema = new mongoose.Schema({
   email: { type: String, default: '' },
   copyrightYear: { type: String, default: '2026' }
 }, { timestamps: true });
+
+export default mongoose.model('Profile', profileSchema);
