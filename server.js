@@ -104,6 +104,25 @@ app.post('/api/projects/:id/comment', async (req, res) => {
   }
 });
 
+
+
+// Delete Comment from Project
+app.delete('/api/projects/:id/comments/:commentId', async (req, res) => {
+  console.log(`DELETE /api/projects/${req.params.id}/comments/${req.params.commentId}`);
+  try {
+    const project = await Project.findOneAndUpdate(
+      { id: req.params.id },
+      { $pull: { comments: { _id: req.params.commentId } } },
+      { new: true }
+    );
+    if (!project) return res.status(404).json({ message: 'Project not found' });
+    res.json(project);
+  } catch (err) {
+    console.error('Error deleting comment:', err);
+    res.status(500).json({ message: err.message });
+  }
+});
+
 // Delete Project
 app.delete('/api/projects/:id', async (req, res) => {
   try {
