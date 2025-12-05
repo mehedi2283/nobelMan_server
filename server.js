@@ -64,6 +64,46 @@ app.post('/api/projects', async (req, res) => {
 });
 
 
+// Like a Project
+app.post('/api/projects/:id/like', async (req, res) => {
+  console.log(`POST /api/projects/${req.params.id}/like`);
+  try {
+    const project = await Project.findOneAndUpdate(
+      { id: req.params.id },
+      { $inc: { likes: 1 } },
+      { new: true }
+    );
+    if (!project) return res.status(404).json({ message: 'Project not found' });
+    res.json(project);
+  } catch (err) {
+    console.error('Error liking project:', err);
+    res.status(500).json({ message: err.message });
+  }
+});
+
+// Add Comment to Project
+app.post('/api/projects/:id/comment', async (req, res) => {
+  console.log(`POST /api/projects/${req.params.id}/comment`);
+  const { author, text } = req.body;
+  
+  if (!author || !text) {
+      return res.status(400).json({ message: 'Author and text required' });
+  }
+
+  try {
+    const project = await Project.findOneAndUpdate(
+      { id: req.params.id },
+      { $push: { comments: { author, text, createdAt: new Date() } } },
+      { new: true }
+    );
+    if (!project) return res.status(404).json({ message: 'Project not found' });
+    res.json(project);
+  } catch (err) {
+    console.error('Error commenting on project:', err);
+    res.status(500).json({ message: err.message });
+  }
+});
+
 // Delete Project
 app.delete('/api/projects/:id', async (req, res) => {
   try {
