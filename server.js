@@ -3,6 +3,7 @@ import mongoose from 'mongoose';
 import cors from 'cors';
 import Project from './models/Project.js';
 import dotenv from 'dotenv';
+import ClientLogo from './models/ClientLogo.js';
 
 dotenv.config();
 
@@ -149,6 +150,47 @@ app.post('/api/projects/reorder', async (req, res) => {
     res.json({ message: 'Projects reordered' });
   } catch (err) {
     res.status(400).json({ message: err.message });
+  }
+});
+
+
+
+
+
+// --- CLIENT LOGO ROUTES ---
+
+// Get all logos
+app.get('/api/logos', async (req, res) => {
+  try {
+    const logos = await ClientLogo.find().sort({ createdAt: -1 });
+    res.json(logos);
+  } catch (err) {
+    console.error('Error fetching logos:', err);
+    res.status(500).json({ message: err.message });
+  }
+});
+
+// Add a logo
+app.post('/api/logos', async (req, res) => {
+  const { name, url } = req.body;
+  try {
+    const newLogo = new ClientLogo({ name, url });
+    await newLogo.save();
+    res.json(newLogo);
+  } catch (err) {
+    console.error('Error saving logo:', err);
+    res.status(400).json({ message: err.message });
+  }
+});
+
+// Delete a logo
+app.delete('/api/logos/:id', async (req, res) => {
+  try {
+    await ClientLogo.findByIdAndDelete(req.params.id);
+    res.json({ message: 'Logo deleted' });
+  } catch (err) {
+    console.error('Error deleting logo:', err);
+    res.status(500).json({ message: err.message });
   }
 });
 
