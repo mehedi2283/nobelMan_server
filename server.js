@@ -259,6 +259,16 @@ app.delete('/api/logos/:id', async (req, res) => {
   }
 });
 
+app.post('/api/logos/bulk-delete', async (req, res) => {
+  const { ids } = req.body;
+  try {
+    await ClientLogo.deleteMany({ _id: { $in: ids } });
+    res.json({ message: 'Logos deleted' });
+  } catch (err) {
+    res.status(500).json({ message: err.message });
+  }
+});
+
 
 // --- PROFILE ROUTES ---
 
