@@ -354,6 +354,18 @@ app.post('/api/messages', async (req, res) => {
   }
 });
 
+
+
+// Mark All Messages Read
+app.put('/api/messages/read-all', async (req, res) => {
+  try {
+    await Message.updateMany({ read: false }, { $set: { read: true } });
+    res.json({ message: 'All messages marked as read' });
+  } catch (err) {
+    res.status(500).json({ message: err.message });
+  }
+});
+
 // Mark Message as Read
 app.put('/api/messages/:id/read', async (req, res) => {
   try {
@@ -401,6 +413,17 @@ app.put('/api/chat-logs/:id/read', async (req, res) => {
   try {
     const log = await ChatLog.findByIdAndUpdate(req.params.id, { read: true }, { new: true });
     res.json(log);
+  } catch (err) {
+    res.status(500).json({ message: err.message });
+  }
+});
+
+
+// Mark All Chat Logs Read
+app.put('/api/chat-logs/read-all', async (req, res) => {
+  try {
+    await ChatLog.updateMany({ role: 'user', read: false }, { $set: { read: true } });
+    res.json({ message: 'All chat logs marked as read' });
   } catch (err) {
     res.status(500).json({ message: err.message });
   }
