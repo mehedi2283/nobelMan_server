@@ -159,13 +159,42 @@ app.post('/api/projects/:id/comment', async (req, res) => {
   try {
     const project = await Project.findOneAndUpdate(
       { id: req.params.id },
-      { $push: { comments: { author, text, createdAt: new Date() } } },
+      { $push: { comments: { author, text, createdAt: new Date(), read: false } } },
       { new: true }
     );
     if (!project) return res.status(404).json({ message: 'Project not found' });
     res.json(project);
   } catch (err) {
     console.error('Error commenting on project:', err);
+    res.status(500).json({ message: err.message });
+  }
+});
+
+
+// Mark Comment as Read
+app.put('/api/projects/:id/comments/:commentId/read', async (req, res) => {
+  try {
+    const { id, commentId } = req.params;
+    
+    let queryId;
+    if (mongoose.Types.ObjectId.isValid(commentId)) {
+        queryId = new mongoose.Types.ObjectId(commentId);
+    } else {
+        // If it's a timestamp-based ID or similar, we might need a different approach 
+        // but generally comments should have _id
+        queryId = commentId;
+    }
+
+    const project = await Project.findOneAndUpdate(
+      { id: id, "comments._id": queryId },
+      { $set: { "comments.$.read": true } },
+      { new: true }
+    );
+    
+    if (!project) return res.status(404).json({ message: 'Project or comment not found' });
+    res.json(project);
+  } catch (err) {
+    console.error('Error marking comment as read:', err);
     res.status(500).json({ message: err.message });
   }
 });
@@ -325,6 +354,16 @@ app.post('/api/messages', async (req, res) => {
   }
 });
 
+// Mark Message as Read
+app.put('/api/messages/:id/read', async (req, res) => {
+  try {
+    const message = await Message.findByIdAndUpdate(req.params.id, { read: true }, { new: true });
+    res.json(message);
+  } catch (err) {
+    res.status(500).json({ message: err.message });
+  }
+});
+
 app.delete('/api/messages/:id', async (req, res) => {
   try {
     await Message.findByIdAndDelete(req.params.id);
@@ -354,6 +393,16 @@ app.post('/api/chat-logs', async (req, res) => {
     res.json(newLog);
   } catch (err) {
     res.status(400).json({ message: err.message });
+  }
+});
+
+// Mark Chat Log as Read
+app.put('/api/chat-logs/:id/read', async (req, res) => {
+  try {
+    const log = await ChatLog.findByIdAndUpdate(req.params.id, { read: true }, { new: true });
+    res.json(log);
+  } catch (err) {
+    res.status(500).json({ message: err.message });
   }
 });
 
