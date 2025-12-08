@@ -31,8 +31,9 @@ const profileSchema = new mongoose.Schema({
     // Feature Toggles & Treat Modal Config
   showTreatModal: { type: Boolean, default: false },
   treatTitle: { type: String, default: 'Hey!' },
+  treatImageTitle: { type: String, default: 'I am Nobel' },
   treatMessage: { type: String, default: 'Welcome to my portofio' },
-  treatImage: { type: String, default: 'https://i.ibb.co.com/YFQCpFXL/logo-N.png' },
+  treatImage: { type: String, default: 'https://i.ibb.co/3mGN2F24/Hero-img-Color.png' },
   treatButtonText: { type: String, default: 'Close' },
   treatInterval: { type: Number, default: 5 }, // in seconds
   treatMaxShowCount: { type: Number, default: 1 } // max appearances per session
