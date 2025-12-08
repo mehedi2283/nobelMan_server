@@ -18,7 +18,7 @@ const projectSchema = new mongoose.Schema({
   year: { type: String },
   client: { type: String },
   gallery: [{ type: String }],
-  order: { type: Number, default: 0 },
+  order : { type: Number, default: 0 },
   likes: { type: Number, default: 0 },
   comments: [commentSchema]
 }, { timestamps: true });

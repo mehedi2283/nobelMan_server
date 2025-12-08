@@ -28,8 +28,14 @@ const profileSchema = new mongoose.Schema({
   email: { type: String, default: '' },
   copyrightYear: { type: String, default: '2026' },
   
-  // Feature Toggles
-  showTreatModal: { type: Boolean, default: false }
+    // Feature Toggles & Treat Modal Config
+  showTreatModal: { type: Boolean, default: false },
+  treatTitle: { type: String, default: 'Hey!' },
+  treatMessage: { type: String, default: 'Welcome to my portofio' },
+  treatImage: { type: String, default: 'https://i.ibb.co.com/YFQCpFXL/logo-N.png' },
+  treatButtonText: { type: String, default: 'Close' },
+  treatInterval: { type: Number, default: 5 }, // in seconds
+  treatMaxShowCount: { type: Number, default: 1 } // max appearances per session
 }, { timestamps: true });
 
 export default mongoose.model('Profile', profileSchema);
