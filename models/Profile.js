@@ -26,7 +26,10 @@ const profileSchema = new mongoose.Schema({
   socialBehance: { type: String, default: '' },
   socialInstagram: { type: String, default: '' },
   email: { type: String, default: '' },
-  copyrightYear: { type: String, default: '2026' }
+  copyrightYear: { type: String, default: '2026' },
+  
+  // Feature Toggles
+  showTreatModal: { type: Boolean, default: false }
 }, { timestamps: true });
 
 export default mongoose.model('Profile', profileSchema);
